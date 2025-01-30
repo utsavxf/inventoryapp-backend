@@ -1,0 +1,23 @@
+Device.java(Class)(model)
+So first of all we have made a Device model with respective fields and getters and setter for the field values
+it's just a model we are not required to write any business logic in it,also with the help of annotations we have declared it
+as a neo4j node and also specified the id
+
+InventoryService(Interface)(service)
+defines the blueprint for CRUD(save,get,modify,delete)operations no logic here,obviously it's just an interface
+
+DeviceService(Class)(service)
+implements InventoryService interface overrides the given method and contains the actual logic for interacting with the database
+This is the file which contains the business logic and interacts with DeviceRepository to save data to database(neo4j in this case)
+
+DeviceController(Class)(controller)
+REST API controller that handles HTTP requests and calls DeviceService,analogous to controller that we had in mernstack
+
+DeviceRepository(Interface)(repository)
+A Neo4j repository for saving and retrieving data. Neo4j provides the implementation at runtime.You don't have to worry about the implementation for now
+
+
+Summary of Data Flow
+Controller receives HTTP requests → Calls methods in DeviceService.
+Service processes the logic → Calls methods in DeviceRepository.
+Repository interacts with Neo4j to perform CRUD operations.
