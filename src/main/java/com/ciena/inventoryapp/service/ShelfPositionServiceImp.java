@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class ShelfPositionImp implements ShelfPositionService {
+public class ShelfPositionServiceImp implements ShelfPositionService {
 
     //We need to connect with the database
     @Autowired
@@ -28,4 +29,14 @@ public class ShelfPositionImp implements ShelfPositionService {
     public List<ShelfPosition> getAllShelfPositions() {
         return shelfPositionRepository.findAll();
     }
+
+    @Override
+    public ShelfPosition updateShelfPosition(Long id,ShelfPosition shelfPosition) {
+        ShelfPosition existingShelfPositon = getShelfPosition(id);
+        existingShelfPositon.setName(shelfPosition.getName());
+        return shelfPositionRepository.save(existingShelfPositon);
+
+    }
+
+
 }

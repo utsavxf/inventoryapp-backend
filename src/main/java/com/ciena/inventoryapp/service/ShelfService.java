@@ -9,4 +9,5 @@ public interface ShelfService {
   Shelf getShelfById(Long id);
   List<Shelf> getAllShelves();
   void addShelfToShelfPosition(Long shelfId,Long shelfPositionId);
+  Shelf updateShelf(Long id, Shelf shelf);
 }

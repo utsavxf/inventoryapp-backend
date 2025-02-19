@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200") // Allow requests from this origin
 @RestController
-@RequestMapping("/shelfpositions")
+@RequestMapping("/shelfposition")
 public class ShelfPositionController {
 
     // Logger for debugging
@@ -33,9 +34,15 @@ public class ShelfPositionController {
         return shelfPositionService.getShelfPosition(id);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/getAllShelfPositions")
     public List<ShelfPosition> getAllShelfPositions() {
         logger.info("Fetching all shelf positions");
         return shelfPositionService.getAllShelfPositions();
+    }
+
+    @PutMapping("/update/{id}")
+    public ShelfPosition updateShelfPosition(@PathVariable Long id, @RequestBody ShelfPosition shelfPosition) {
+        logger.info("Updating shelf position with ID: {}", id);
+        return shelfPositionService.updateShelfPosition(id, shelfPosition);
     }
 }

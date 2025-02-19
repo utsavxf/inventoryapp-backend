@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200") // Allow requests from this origin
 @RestController
-@RequestMapping("/devices")
+@RequestMapping("/device")
 public class DeviceController {
 
     //logger,creating an instance
@@ -25,11 +28,14 @@ public class DeviceController {
     public DeviceController(DeviceService deviceService){
         this.deviceService=deviceService;
     }
+
     @PostMapping("/save")
     public Device saveDevice(@RequestBody Device device){
+        System.out.println(device);
         logger.info("Saving a new device: {}", device);
         return deviceService.saveDevice(device);
     }
+
     @GetMapping("/{id}")
     public Device getDevice(@PathVariable Long id) {
         logger.info("Fetching device with ID: {}", id);
@@ -40,13 +46,22 @@ public class DeviceController {
         return device;
     }
 
+    @GetMapping("/getByName/{name}")
+    public  Device getDeviceByName(@PathVariable String name){
+        logger.info("Fetching device with name: {}", name);
+        Device device = deviceService.getDeviceByName(name);
+        if (device == null) {
+            logger.warn("Device with name {} not found", name);
+        }
+        return device;
+    }
     @GetMapping("/getAllDevices")
     public List<Device> getAllDevices() {
         logger.info("Fetching all devices");
         return deviceService.getAllDevices();
     }
 
-    @PutMapping("/modify/{id}")
+    @PutMapping("/update/{id}")
     public Device modifyDevice(@PathVariable Long id, @RequestBody Device updatedDevice) {
         logger.info("Modifying device with ID: {}", id);
         return deviceService.modifyDevice(id, updatedDevice);
@@ -61,10 +76,14 @@ public class DeviceController {
     }
 
     @PostMapping("/{deviceId}/addShelfPosition/{shelfPositionId}")
-    public ResponseEntity<String> addShelfPositionToDevice(
+    public ResponseEntity<Map<String,String>> addShelfPositionToDevice(
             @PathVariable Long deviceId,
             @PathVariable Long shelfPositionId) {
+        System.out.println("REQUEST REACHING HERE OR NOT");
+        System.out.println(deviceId+shelfPositionId);
         deviceService.addShelfPositionToDevice(deviceId, shelfPositionId);
-        return ResponseEntity.ok("Shelf position added to device successfully");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Shelf Position added to device successfully");
+        return ResponseEntity.ok(response); // Return a JSON object
     }
 }

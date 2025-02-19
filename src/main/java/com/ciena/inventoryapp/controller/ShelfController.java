@@ -9,8 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200") // Allow requests from this origin
 @RestController
 @RequestMapping("/shelf")
 public class ShelfController {
@@ -45,11 +48,21 @@ public class ShelfController {
         return shelfService.getAllShelves();
     }
 
+    @PutMapping("/update/{id}")
+    Shelf updateShelf(@PathVariable Long id, @RequestBody Shelf shelf) {
+        logger.info("Updating shelf with ID: {}", id);
+        return shelfService.updateShelf(id, shelf);
+    }
+
     @PostMapping("/{shelfId}/addShelfPosition/{shelfPositionId}")
-    public ResponseEntity<String> addShelfToShelfPosition(
+    public ResponseEntity<Map<String, String>> addShelfToShelfPosition(
             @PathVariable Long shelfId,
             @PathVariable Long shelfPositionId) {
         shelfService.addShelfToShelfPosition(shelfId, shelfPositionId);
-        return ResponseEntity.ok("Shelf added to Shelf Position Successfully");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Shelf added to Shelf Position successfully");
+        return ResponseEntity.ok(response); // Return a JSON object
     }
+
+
 }

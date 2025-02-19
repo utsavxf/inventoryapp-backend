@@ -20,12 +20,16 @@ public class DeviceServiceImp implements DeviceService {
 
     @Override
     public Device saveDevice(Device device) {
+        System.out.println("Saving device " + device);
         return deviceRepository.save(device);
     }
-
     @Override
     public Device getDevice(Long id) {
         return deviceRepository.findById(id).orElseThrow(() -> new RuntimeException("Device not found"));
+    }
+
+    public Device getDeviceByName(String name){
+        return deviceRepository.getDeviceByName(name);
     }
 
     @Override
@@ -37,7 +41,7 @@ public class DeviceServiceImp implements DeviceService {
     public Device modifyDevice(Long id, Device device) {
         Device existingDevice = getDevice(id); // Get the existing device
         existingDevice.setName(device.getName());
-        existingDevice.setDeviceType(device.getDeviceType());
+        existingDevice.setType(device.getType());
         return deviceRepository.save(existingDevice); // Save updated device
     }
 
@@ -55,6 +59,8 @@ public class DeviceServiceImp implements DeviceService {
                 .orElseThrow(() -> new RuntimeException("Shelf Position not found"));
 
         device.addShelfPosition(shelfPosition); // Add relationship
+        shelfPosition.attachDevice(device);
+        shelfPositionRepository.save(shelfPosition);
         deviceRepository.save(device); // Save updated device
     }
 }

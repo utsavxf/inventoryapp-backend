@@ -1,23 +1,28 @@
 package com.ciena.inventoryapp.model;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Node
 public class Shelf {
+ @GeneratedValue
  @Id
  private Long id;
  private String name;
- private String shelfType;
- private Long positionId; //will be associated with shelf position
+ private String type;
+
 
  @Relationship(type = "HAS", direction = Relationship.Direction.OUTGOING)
  private ShelfPosition shelfPosition;
 
  //FUNCTION TO ADD SHEL TO SHELF POSITION
- public void addShelf(ShelfPosition shelfPosition){
-  this.shelfPosition = shelfPosition; // ✅ Update the Neo4j relationship
-  this.positionId = shelfPosition.getId(); // (Optional) Keep track of ID
+ public void addShelfPosition(ShelfPosition shelfPosition){
+  this.shelfPosition = shelfPosition; //Update the Neo4j relationship
  }
 
  //GETTER AND SETTERS
@@ -37,19 +42,20 @@ public class Shelf {
   this.name = name;
  }
 
- public String getShelfType() {
-  return shelfType;
+
+ public ShelfPosition getShelfPosition() {
+  return shelfPosition;
  }
 
- public void setShelfType(String shelfType) {
-  this.shelfType = shelfType;
+ public void setShelfPosition(ShelfPosition shelfPosition) {
+  this.shelfPosition = shelfPosition;
  }
 
- public Long getPositionId() {
-  return positionId;
+ public String getType() {
+  return type;
  }
 
- public void setPositionId(Long positionId) {
-  this.positionId = positionId;
+ public void setType(String type) {
+  this.type = type;
  }
 }

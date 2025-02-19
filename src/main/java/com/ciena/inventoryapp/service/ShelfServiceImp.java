@@ -35,8 +35,17 @@ public class ShelfServiceImp implements ShelfService{
     public void addShelfToShelfPosition(Long shelfId, Long shelfPositionId) {
         Shelf shelf=shelfRepository.findById(shelfId).orElseThrow(()->new RuntimeException("Shelf not found"));
         ShelfPosition shelfPosition=shelfPositionRepository.findById(shelfPositionId).orElseThrow(()->new RuntimeException("Shelf Position not found"));
-        shelf.addShelf(shelfPosition);
+        shelf.addShelfPosition(shelfPosition);
+        shelfPosition.attachShelf(shelf);
         shelfRepository.save(shelf);
         shelfPositionRepository.save(shelfPosition);
+    }
+
+    @Override
+    public Shelf updateShelf(Long id, Shelf shelf) {
+        Shelf currentShelf=getShelfById(id);
+        currentShelf.setName(shelf.getName());
+        currentShelf.setType(shelf.getType());
+        return shelfRepository.save(currentShelf);
     }
 }
