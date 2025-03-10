@@ -10,4 +10,6 @@ public interface ShelfService {
   List<Shelf> getAllShelves();
   void addShelfToShelfPosition(Long shelfId,Long shelfPositionId);
   Shelf updateShelf(Long id, Shelf shelf);
+  void deleteShelf(Long id);
+  void removeShelfFromShelfPosition(Long shelfId,Long shelfPositionId);
 }

@@ -2,7 +2,9 @@ package com.ciena.inventoryapp.service;
 
 import com.ciena.inventoryapp.model.ShelfPosition;
 import com.ciena.inventoryapp.repository.ShelfPositionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,17 +14,26 @@ import java.util.Optional;
 public class ShelfPositionServiceImp implements ShelfPositionService {
 
     //We need to connect with the database
-    @Autowired
-    ShelfPositionRepository shelfPositionRepository;
+    private final ShelfPositionRepository shelfPositionRepository;
+    //constructor injection
+    public ShelfPositionServiceImp(ShelfPositionRepository shelfPositionRepository) {
+        this.shelfPositionRepository = shelfPositionRepository;
+    }
 
     @Override
+    @Transactional
     public ShelfPosition saveShelfPosition(ShelfPosition shelfPosition) {
-     return shelfPositionRepository.save(shelfPosition);
+        try {
+            return shelfPositionRepository.save(shelfPosition);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Shelf Position with name '" + shelfPosition.getName() + "' already exists.");
+        }
     }
 
     @Override
     public ShelfPosition getShelfPosition(Long id) {
-        return shelfPositionRepository.findById(id).orElseThrow(() -> new RuntimeException("Device not found"));
+        return shelfPositionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Shelf Position not found with ID: " + id));
     }
 
     @Override
@@ -31,11 +42,21 @@ public class ShelfPositionServiceImp implements ShelfPositionService {
     }
 
     @Override
+    @Transactional
     public ShelfPosition updateShelfPosition(Long id,ShelfPosition shelfPosition) {
         ShelfPosition existingShelfPositon = getShelfPosition(id);
         existingShelfPositon.setName(shelfPosition.getName());
-        return shelfPositionRepository.save(existingShelfPositon);
+        return saveShelfPosition(existingShelfPositon);
 
+    }
+
+    @Override
+    @Transactional
+    public void deleteShelfPosition(Long id) {
+        if (!shelfPositionRepository.existsById(id)) {
+            throw new RuntimeException("Shelf Position not found with ID: " + id);
+        }
+        shelfPositionRepository.deleteById(id);
     }
 
 

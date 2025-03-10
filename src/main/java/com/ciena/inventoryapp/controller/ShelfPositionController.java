@@ -2,11 +2,15 @@ package com.ciena.inventoryapp.controller;
 
 import com.ciena.inventoryapp.model.ShelfPosition;
 import com.ciena.inventoryapp.service.ShelfPositionService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:4200") // Allow requests from this origin
 @RestController
@@ -23,26 +27,39 @@ public class ShelfPositionController {
     }
 
     @PostMapping("/save")
-    public ShelfPosition saveShelfPosition(@RequestBody ShelfPosition shelfPosition) {
+    public ResponseEntity<ShelfPosition> saveShelfPosition(@RequestBody @Valid ShelfPosition shelfPosition) {
         logger.info("Saving a new shelf position: {}", shelfPosition);
-        return shelfPositionService.saveShelfPosition(shelfPosition);
+        ShelfPosition savedShelfPosition = shelfPositionService.saveShelfPosition(shelfPosition);
+        return ResponseEntity.ok(savedShelfPosition);
     }
 
     @GetMapping("/{id}")
-    public ShelfPosition getShelfPosition(@PathVariable Long id) {
+    public ResponseEntity<ShelfPosition> getShelfPosition(@PathVariable Long id) {
         logger.info("Fetching shelf position with ID: {}", id);
-        return shelfPositionService.getShelfPosition(id);
+        ShelfPosition shelfPosition = shelfPositionService.getShelfPosition(id);
+        return ResponseEntity.ok(shelfPosition);
     }
 
     @GetMapping("/getAllShelfPositions")
-    public List<ShelfPosition> getAllShelfPositions() {
+    public ResponseEntity<List<ShelfPosition>> getAllShelfPositions() {
         logger.info("Fetching all shelf positions");
-        return shelfPositionService.getAllShelfPositions();
+        List<ShelfPosition> shelfPositions = shelfPositionService.getAllShelfPositions();
+        return ResponseEntity.ok(shelfPositions);
     }
 
     @PutMapping("/update/{id}")
-    public ShelfPosition updateShelfPosition(@PathVariable Long id, @RequestBody ShelfPosition shelfPosition) {
+    public ResponseEntity<ShelfPosition> updateShelfPosition(@PathVariable Long id, @RequestBody @Valid ShelfPosition shelfPosition) {
         logger.info("Updating shelf position with ID: {}", id);
-        return shelfPositionService.updateShelfPosition(id, shelfPosition);
+        ShelfPosition updatedShelfPosition = shelfPositionService.updateShelfPosition(id, shelfPosition);
+        return ResponseEntity.ok(updatedShelfPosition);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String,String>>deleteShelfPosition(@PathVariable Long id) {
+        logger.info("Deleting shelf position with ID: {}", id);
+        shelfPositionService.deleteShelfPosition(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Shelf Position deleted successfully");
+        return ResponseEntity.ok(response);
     }
 }

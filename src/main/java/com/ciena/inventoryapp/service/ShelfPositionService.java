@@ -11,4 +11,5 @@ public interface ShelfPositionService {
      ShelfPosition getShelfPosition(Long id);
      List<ShelfPosition> getAllShelfPositions();
      ShelfPosition updateShelfPosition(Long id,ShelfPosition shelfPosition);
+     void deleteShelfPosition(Long id);
 }

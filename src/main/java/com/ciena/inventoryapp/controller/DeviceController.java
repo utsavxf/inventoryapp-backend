@@ -2,6 +2,8 @@ package com.ciena.inventoryapp.controller;
 
 import com.ciena.inventoryapp.model.Device;
 import com.ciena.inventoryapp.service.DeviceService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,69 +23,79 @@ public class DeviceController {
     //logger,creating an instance
     private static final Logger logger = LoggerFactory.getLogger(DeviceController.class);
 
-
-
     private final DeviceService deviceService;
-    //making constructor injection
     public DeviceController(DeviceService deviceService){
         this.deviceService=deviceService;
     }
 
     @PostMapping("/save")
-    public Device saveDevice(@RequestBody Device device){
-        System.out.println(device);
+    public ResponseEntity<Device> saveDevice(@RequestBody @Valid Device device) {
         logger.info("Saving a new device: {}", device);
-        return deviceService.saveDevice(device);
+        Device savedDevice = deviceService.saveDevice(device);
+        return ResponseEntity.ok(savedDevice);
     }
 
     @GetMapping("/{id}")
-    public Device getDevice(@PathVariable Long id) {
+    public ResponseEntity<Device> getDevice(@PathVariable Long id) {
         logger.info("Fetching device with ID: {}", id);
         Device device = deviceService.getDevice(id);
-        if (device == null) {
-            logger.warn("Device with ID {} not found", id);
-        }
-        return device;
+        return ResponseEntity.ok(device);
     }
 
     @GetMapping("/getByName/{name}")
-    public  Device getDeviceByName(@PathVariable String name){
+    public ResponseEntity<Device> getDeviceByName(@PathVariable String name) {
         logger.info("Fetching device with name: {}", name);
         Device device = deviceService.getDeviceByName(name);
-        if (device == null) {
-            logger.warn("Device with name {} not found", name);
-        }
-        return device;
+        return ResponseEntity.ok(device);
     }
+
     @GetMapping("/getAllDevices")
-    public List<Device> getAllDevices() {
+    public ResponseEntity<List<Device>> getAllDevices() {
         logger.info("Fetching all devices");
-        return deviceService.getAllDevices();
+        List<Device> devices = deviceService.getAllDevices();
+        return ResponseEntity.ok(devices);
     }
 
     @PutMapping("/update/{id}")
-    public Device modifyDevice(@PathVariable Long id, @RequestBody Device updatedDevice) {
+    public ResponseEntity<Device> modifyDevice(@PathVariable Long id, @RequestBody @Valid Device updatedDevice) {
         logger.info("Modifying device with ID: {}", id);
-        return deviceService.modifyDevice(id, updatedDevice);
-
+        Device modifiedDevice = deviceService.modifyDevice(id, updatedDevice);
+        return ResponseEntity.ok(modifiedDevice);
     }
 
     @DeleteMapping("/delete/{id}")
-    public boolean deleteDevice(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteDevice(@PathVariable Long id) {
         logger.info("Deleting device with ID: {}", id);
         deviceService.deleteDevice(id);
-        return true;
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Device deleted successfully");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{deviceId}/addShelfPosition/{shelfPositionId}")
-    public ResponseEntity<Map<String,String>> addShelfPositionToDevice(
+    public ResponseEntity<Map<String, String>> addShelfPositionToDevice(
             @PathVariable Long deviceId,
             @PathVariable Long shelfPositionId) {
-        System.out.println("REQUEST REACHING HERE OR NOT");
-        System.out.println(deviceId+shelfPositionId);
+        logger.info("Adding Shelf Position to Device: deviceId={}, shelfPositionId={}", deviceId, shelfPositionId);
         deviceService.addShelfPositionToDevice(deviceId, shelfPositionId);
         Map<String, String> response = new HashMap<>();
         response.put("message", "Shelf Position added to device successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{deviceId}/removeShelfPosition/{shelfPositionId}")
+    public ResponseEntity<Map<String,String>> removeShelfPositionFromDevice(@PathVariable Long deviceId,@PathVariable Long shelfPositionId){
+        deviceService.removeShelfPositionFromDevice(deviceId, shelfPositionId);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Shelf Position removed from device successfully");
         return ResponseEntity.ok(response); // Return a JSON object
     }
+
+
+
 }
+
+
+
+
+

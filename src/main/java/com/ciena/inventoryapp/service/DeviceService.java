@@ -12,4 +12,5 @@ public interface DeviceService {
   void deleteDevice(Long id);
   List<Device>getAllDevices();
   void addShelfPositionToDevice(Long deviceId,Long shelfPositionId);
+  void removeShelfPositionFromDevice(Long deviceId,Long shelfPositionId);
 }
